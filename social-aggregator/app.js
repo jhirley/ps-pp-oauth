@@ -4,12 +4,29 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var passport = require('passport');
+var session = require('express-session');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var auth = require('./routes/auth');
+
+var env = process.env.NODE_ENV  = process.env.NODE_ENV||'development';  //jf let the system know we are in development mode
+
+var config = require('./config')[env];
 
 var app = express();
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
+passport.use(new GoogleStrategy({
+  clientID: config.GOOGLE_CLIENT_ID
+  ,clientSecret: config.GOOGLE_CLIENT_SECRET
+  ,callbackURL: 'http://localhost:3000/auth/google/callback'
+  },
+  function(req, accessToken, refreshToken, profile, done){
+    done(null, profile);
+  }     //jf https://console.developers.google.com/apis/api/contacts/overview?project=oauthtest-socialagg
+));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -20,10 +37,34 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(config.rootPath+'/public')); //jf defines a path for static files
+
+app.use(session({secret:'cc carebears rock!',
+  resave: true,
+  saveUninitialized: true
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser (function (user, done){
+   console.log('passport.serializeUser (function (user is %s\n', user);
+  if(user){
+    done(null, user._id);
+  }
+});
+
+passport.deserializeUser(function (user, done) {
+  console.log('passport.deserializeUser id is%s\npassport.deserializeUser user is%s\n', id, user);
+  done(null, user);
+});
+
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/auth', auth);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
