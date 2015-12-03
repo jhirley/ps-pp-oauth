@@ -3,7 +3,7 @@
 var passport = require('passport');
 
 module.exports = function(app, config){
-	console.log('passport.js loaded\n');
+	console.log('passport.js loaded');
 	app.use(passport.initialize());
 	app.use(passport.session());
 

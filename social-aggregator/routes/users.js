@@ -12,7 +12,7 @@ router.use('/', function (req, res, next){
 router.get('/', function(req, res, next) {
   res.render('users', {
   	user: {name : req.user.displayName,
-  	image: req.user._json.image.url
+  	image: req.user.image
   }});
 });
 
