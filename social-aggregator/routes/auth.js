@@ -38,5 +38,17 @@ router.route('/facebook')
     //scope: ['email','public_profile']
   }));
 
+router.route('/linkedin/callback')
+  .get(passport.authenticate('linkedin', {
+    successRedirect: '/users/',
+    failure: '/error/'
+  }));
+
+router.route('/linkedin')
+  .get(passport.authenticate('linkedin', 
+  	{ 
+  	//	scope: ['r_basicprofile', 'r_emailaddress'] 
+  	}));
+
 
 module.exports = router;
