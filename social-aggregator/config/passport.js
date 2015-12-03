@@ -16,5 +16,7 @@ module.exports = function(app, config){
 	});
 
 	require('./strategies/google.strategy')(app, config);
+	require('./strategies/facebook.strategy')(app, config);
+	require('./strategies/twitter.strategy')(app, config);
 
 }
