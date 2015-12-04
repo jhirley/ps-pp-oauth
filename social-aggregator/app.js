@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
 var session = require('express-session');
+var mongoose = require('mongoose');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -14,6 +15,9 @@ var auth = require('./routes/auth');
 var env = process.env.NODE_ENV  = process.env.NODE_ENV||'development';  //jf let the system know we are in development mode
 
 var config = require('./config')[env];
+
+var db = mongoose.connect('mongodb://'+config.mongodbServer+'/'+config.mongodbName);
+
 
 var app = express();
 

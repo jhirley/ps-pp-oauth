@@ -1,6 +1,7 @@
 
 var passport = require('passport');
 var TwitterStrategy = require('passport-twitter').Strategy;
+var User = require('../../models/userModel');
 
 module.exports = function(app, config){
 	console.log('twitter.strategy.jsloaded');
@@ -13,17 +14,29 @@ module.exports = function(app, config){
 		,passReqToCallback: true
 		},
 	 	function (req, token, tokenSecret, profile, done){
-	 		var user = {};
-	 		console.log(profile);
-	 		//user.email = profile.emails[0].value;
-	 		user.image = profile._json.profile_image_url; //jfphotos[0].value;
-	 		user.displayName = profile.displayName;
+	 		var query = {'twitter.id': profile.id};
 
-	 		user.twitter = {};
-	 		user.twitter.id = profile.id;
-	 		user.twitter.token = token;
+	 		User.findOne(query, function (error, user){
+	 			if (user){
+	 				console.log('found twitter user');
+	 				done(null, user);
+	 			} else {
+	 				var user = new User;
+			 		console.log('NOT found twitter user');
+			 		console.log(profile);
+			 		//user.email = profile.emails[0].value;
+			 		user.image = profile._json.profile_image_url; //jfphotos[0].value;
+			 		user.displayName = profile.displayName;
 
-	 		done(null, user);
+			 		user.twitter = {};
+			 		user.twitter.id = profile.id;
+			 		user.twitter.token = token;
+
+			 		user.save();
+
+			 		done(null, user);
+			 	}
+			}); 	
 		}     //jf https://console.developers.google.com/apis/api/contacts/overview?project=oauthtest-socialagg
 	));
 };

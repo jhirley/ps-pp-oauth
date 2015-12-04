@@ -1,6 +1,7 @@
 
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
+var User = require('../../models/userModel');
 
 module.exports = function(app, config){
 	console.log('facebook.strategy.jsloaded');
@@ -15,17 +16,30 @@ module.exports = function(app, config){
 
 		},
 	 	function (req, accessToken, refreshToken, profile, done){
-	 		var user = {};
-	 		console.log(profile);
-	 		user.email = profile.emails[0].value;
-	 		user.image = profile.photos[0].value;  //jfphotos[0].value;
-	 		user.displayName = profile.displayName;
+	 		
+	 		var query = {'facebook.id': profile.id};
 
-	 		user.facebook = {};
-	 		user.facebook.id = profile.id;
-	 		user.facebook.token = accessToken;
+	 		User.findOne(query, function (error, user){
+	 			if (user){
+	 				console.log('found facebook user');
+	 				done(null, user);
+	 			} else {
 
-	 		done(null, user);
+	 				console.log('NOT found facebook user');
+			 		var user = new User;
+			 		console.log(profile);
+			 		user.email = profile.emails[0].value;
+			 		user.image = profile.photos[0].value;  //jfphotos[0].value;
+			 		user.displayName = profile.displayName;
+
+			 		user.facebook = {};
+			 		user.facebook.id = profile.id;
+			 		user.facebook.token = accessToken;
+
+			 		user.save();
+			 		done(null, user);
+			 	}
+		 	});
 		}     //jf https://console.developers.google.com/apis/api/contacts/overview?project=oauthtest-socialagg
 	));
 };
