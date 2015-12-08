@@ -1,3 +1,6 @@
+var env = process.env.NODE_ENV  = process.env.NODE_ENV||'development';  //jf let the system know we are in development mode
+var config = require('./config')[env];
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -12,9 +15,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var auth = require('./routes/auth');
 
-var env = process.env.NODE_ENV  = process.env.NODE_ENV||'development';  //jf let the system know we are in development mode
 
-var config = require('./config')[env];
 
 var db = mongoose.connect('mongodb://'+config.mongodbServer+'/'+config.mongodbName);
 

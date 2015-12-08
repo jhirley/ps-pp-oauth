@@ -16,30 +16,55 @@ module.exports = function(app, config){
 
 		},
 	 	function (req, accessToken, refreshToken, profile, done){
-	 		
-	 		var query = {'facebook.id': profile.id};
+	 		if(req.user){
+	 			var query = {};
+	 			if(req.user.google){
+	 				console.log('google');
+	 				var query = { 'google.id': req.user.google.id};
+	 			} else if(req.user.twitter){
+	 				console.log('twitter');
+	 				var query = { 'twitter.id': req.user.twitter.id};
+	 			} else if(req.user.linkedin){
+	 				console.log('linkedin');
+	 				var query = { 'linkedin.id': req.user.linkedin.id};
+	 			} 
+	 			User.findOne(query, function (error, user){
+					if(user) {
+				 		user.facebook = {};
+				 		user.facebook.id = profile.id;
+				 		user.facebook.token = accessToken;
+				 		user.facebook.refreshToken = refreshToken;
 
-	 		User.findOne(query, function (error, user){
-	 			if (user){
-	 				console.log('found facebook user');
-	 				done(null, user);
-	 			} else {
+				 		user.save();
+				 		done(null, user);
+				 	}
+	 			});
+			} else {
+		 		var query = {'facebook.id': profile.id};
 
-	 				console.log('NOT found facebook user');
-			 		var user = new User;
-			 		console.log(profile);
-			 		user.email = profile.emails[0].value;
-			 		user.image = profile.photos[0].value;  //jfphotos[0].value;
-			 		user.displayName = profile.displayName;
+		 		User.findOne(query, function (error, user){
+		 			if (user){
+		 				console.log('found facebook user');
+		 				done(null, user);
+		 			} else {
 
-			 		user.facebook = {};
-			 		user.facebook.id = profile.id;
-			 		user.facebook.token = accessToken;
+		 				console.log('NOT found facebook user');
+				 		var user = new User;
+				 		console.log(profile);
+				 		user.email = profile.emails[0].value;
+				 		user.image = profile.photos[0].value;  //jfphotos[0].value;
+				 		user.displayName = profile.displayName;
 
-			 		user.save();
-			 		done(null, user);
-			 	}
-		 	});
+				 		user.facebook = {};
+				 		user.facebook.id = profile.id;
+				 		user.facebook.token = accessToken;
+				 		user.facebook.refreshToken = refreshToken;
+
+				 		user.save();
+				 		done(null, user);
+				 	}
+				});
+		 	}
 		}     //jf https://console.developers.google.com/apis/api/contacts/overview?project=oauthtest-socialagg
 	));
 };

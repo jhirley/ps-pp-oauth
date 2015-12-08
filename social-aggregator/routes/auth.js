@@ -40,15 +40,13 @@ router.route('/facebook')
 
 router.route('/linkedin/callback')
   .get(passport.authenticate('linkedin', {
-    successRedirect: '/users/',
-    failure: '/error/'
+    successRedirect: '/users',
+    failure: '/error'
   }));
 
 router.route('/linkedin')
-  .get(passport.authenticate('linkedin', 
-  	{ 
-  	//	scope: ['r_basicprofile', 'r_emailaddress'] 
-  	}));
+  .get(passport.authenticate('linkedin' //jf, { //	scope: ['r_basicprofile', 'r_emailaddress'] }
+  	));
 
 
 module.exports = router;
