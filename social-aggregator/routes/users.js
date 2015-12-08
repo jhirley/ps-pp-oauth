@@ -16,8 +16,14 @@ router.use('/', function (req, res, next){
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.render('users', {
-  	user: req.user});
+	if(req.user.facebook){
+		facebook.getImage(req.user.facebook.id, req.user.facebook.token, function(results){
+			req.user.facebook.image = results.url;
+			res.render('users', {user: req.user});
+		});
+	} else {
+		res.render('users', {user: req.user});
+	}
 });
 
 module.exports = router;

@@ -1,6 +1,6 @@
 var OAuth = require('OAuth').OAuth2;
 
-var Facebook = function (facebookkey, facebookSecret ){
+var Facebook = function (facebookID, facebookkey, facebookSecret ){
 	var oauth = new OAuth (
 		facebookkey
 		,facebookSecret
@@ -9,9 +9,9 @@ var Facebook = function (facebookkey, facebookSecret ){
 		,'oauth2/token'
 		,null
 	);
-	var getImage = function(userKey, done) {
+	var getImage = function(facebookID, userKey, done) {
 		oauth.get(
-			'https://graph.facebook.com/v2.5/me/picture?redirect=false&type-large'
+			'https://graph.facebook.com/v2.5/'+facebookID+'/picture?redirect=false&type=large'
 			,userKey
 			,function (err, results, res){
 				results=JSON.parse(results);
