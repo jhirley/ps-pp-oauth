@@ -16,7 +16,12 @@
 		<img src="<%=user.image%>">
 		<%=user.displayName%>
 		<%if(user.facebook){%>
-			<img src="<%=user.facebook.image%>">
+			<div>
+				<img src="<%=user.facebook.image%>">
+			</div>
+		<%}%>
+		<%if(user.facebook.friends){%>
+			<div>I have <%=user.facebook.friends%> friends </div>
 		<%}%>
 	</div>
 	<div>

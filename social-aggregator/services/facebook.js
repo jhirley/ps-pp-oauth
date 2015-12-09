@@ -19,8 +19,21 @@ var Facebook = function (facebookID, facebookkey, facebookSecret ){
 			}
 		);
 	}
+		var getFriends = function(facebookID, userKey, done) {
+		oauth.get(
+			'https://graph.facebook.com/v2.5/'+facebookID+'/friends?redirect=false'
+			,userKey
+			,function (err, results, res){
+				results=JSON.parse(results);
+				console.log(results);
+				console.log(results.summary);
+				done(results.summary);
+			}
+		);
+	}
 	return { 
 		getImage: getImage
+		,getFriends:getFriends
 	}
 }
 
